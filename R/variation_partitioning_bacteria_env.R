@@ -9,7 +9,7 @@ library(dplyr)
 #' @param df1 data.frame
 #' @param df2 data.frame
 #'
-#' @return
+#' @return g
 #' @export
 #'
 #' @examples
