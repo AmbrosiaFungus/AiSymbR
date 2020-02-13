@@ -1,18 +1,10 @@
+rm(list=ls())
+
 library (vegan)
 library(ape)
 library(ggplot2)
 library(dplyr)
 
-
-#' author: Robert Mueller
-#'
-#' @param df1 data.frame
-#' @param df2 data.frame
-#'
-#' @return g
-#' @export
-#'
-#' @examples
 
 merge_data <- function(df1, df2){
 
@@ -23,7 +15,6 @@ merge_data <- function(df1, df2){
   return(out)
 
 }
-
 
 perform_cap_scale <- function(idata, norm_dat, dist_mat){
 
@@ -39,19 +30,6 @@ perform_cap_scale <- function(idata, norm_dat, dist_mat){
 
 }
 
-
-#' Function for the variation partitioning of variables
-#'
-#' @param df data.frame
-#' @param env_vars list of variables for subsetting of data.frame
-#' @param limit_OTU_table from which to which column is the OTU table
-#' @param normalization normalization method for the OTU table
-#'
-#' @return
-#' @export
-#'
-#' @examples
-
 peform_varpart <- function(df, env_vars, limit_OTU_table, normalization="hellinger"){
 
   normi <- decostand(df[limit_OTU_table[1]:nrow(df),limit_OTU_table[2]:ncol(df)], method = normalization)
@@ -63,34 +41,25 @@ peform_varpart <- function(df, env_vars, limit_OTU_table, normalization="helling
 }
 
 
-
-
-
-
-
 #read in Mapping file with the Details for each Sample
-map <- read.csv("/home/robert/Projects/fungal_microbiom_Ai/data/Metadata_Miseq_2017/Metadata2.tsv",sep="\t")
+map <- read.csv("/home/robert/Projects/microbiome-a.incompertus/data/Metadata_with_Host.tsv", sep="\t")
 
 names(map)[1]<-"SampleID"
 
 #read in OTU table which i transposed in Python before
 
-OTU <- read.csv("/home/robert/Projects/bacterial_microbiome_Ai/scripts/forward/Betadiversity/OTU_table_bacteria_filtered.csv", sep=",", header=TRUE)
+OTU <- read.csv("/home/robert/Projects/microbiome-a.incompertus/data/OTU_table_bacteria_forward_Rhizo_unassigned.csv", sep=",", header=TRUE)
 
 #OTU table has a weird column name, fix that
 names(OTU)[1]<-"SampleID"
 
 #rearrange rows in mapping file to match relative abundance matrix
 
-tab <- map[match(OTU$SampleID, as.character(map$SampleID)),]
-summary(OTU$SampleID==tab$SampleID)
+bacteria <- merge_data(map, OTU)
 
-#merge the two Dataframes
-
-bacteria <- merge(tab,OTU, by.x="SampleID", by.y = "SampleID")
-scaledOTU <- scale(bacteria[1:nrow(bacteria),24:ncol(bacteria)], scale=T)
-summary(scaledOTU, display=NULL)
-mean(scaledOTU)
+#scaledOTU <- scale(bacteria[1:nrow(bacteria),24:ncol(bacteria)], scale=T)
+#summary(scaledOTU, display=NULL)
+#mean(scaledOTU)
 
 #delete the Mock-Community and negatives
 bacteria_new <- bacteria[-c(63,64,65,66),]
