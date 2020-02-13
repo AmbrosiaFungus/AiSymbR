@@ -39,6 +39,35 @@ perform_cap_scale <- function(idata, norm_dat, dist_mat){
 
 }
 
+
+#' Function for the variation partitioning of variables
+#'
+#' @param df data.frame
+#' @param env_vars list of variables for subsetting of data.frame
+#' @param limit_OTU_table from which to which column is the OTU table
+#' @param normalization normalization method for the OTU table
+#'
+#' @return
+#' @export
+#'
+#' @examples
+
+peform_varpart <- function(df, env_vars, limit_OTU_table, normalization="hellinger"){
+
+  normi <- decostand(df[limit_OTU_table[1]:nrow(df),limit_OTU_table[2]:ncol(df)], method = normalization)
+
+  df_subset <- df[, env_vars]
+  df_subset <- droplevels(df_subset)
+
+
+}
+
+
+
+
+
+
+
 #read in Mapping file with the Details for each Sample
 map <- read.csv("/home/robert/Projects/fungal_microbiom_Ai/data/Metadata_Miseq_2017/Metadata2.tsv",sep="\t")
 
