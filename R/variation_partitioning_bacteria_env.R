@@ -4,7 +4,7 @@ library (vegan)
 library(ape)
 library(ggplot2)
 library(dplyr)
-
+library(data.table)
 
 merge_data <- function(df1, df2){
 
@@ -26,10 +26,13 @@ perform_cap_scale <- function(idata, norm_dat, dist_mat){
 
   env <- ordistep(cap0, scope=formula(cap1))
 
-  return(list(env, cap0, cap1))
+  anova_res <- env$anova
+
+  return(list(env, cap0, cap1, anova))
 
 }
 
+#TODO have to disentagle this function and maybe work with two different frames rather combined
 peform_varpart <- function(df, env_vars, limit_OTU_table, normalization="hellinger"){
 
   normi <- decostand(df[limit_OTU_table[1]:nrow(df),limit_OTU_table[2]:ncol(df)], method = normalization)
@@ -37,9 +40,19 @@ peform_varpart <- function(df, env_vars, limit_OTU_table, normalization="helling
   df_subset <- df[, env_vars]
   df_subset <- droplevels(df_subset)
 
+  return(normi, df_subset)
 
 }
 
+delete_neg_mock <- function(df){
+
+  df_clean <- as.data.table(df)
+
+  result <- df_clean[!Sample_ID %like% "Mock" & !Sample_ID %like% "Neg"]
+
+  return(result)
+
+}
 
 #read in Mapping file with the Details for each Sample
 map <- read.csv("/home/robert/Projects/microbiome-a.incompertus/data/Metadata_with_Host.tsv", sep="\t")
@@ -53,13 +66,14 @@ OTU <- read.csv("/home/robert/Projects/microbiome-a.incompertus/data/OTU_table_b
 #OTU table has a weird column name, fix that
 names(OTU)[1]<-"SampleID"
 
-#rearrange rows in mapping file to match relative abundance matrix
-
+#merge two data.frames based on ID
 bacteria <- merge_data(map, OTU)
 
 #scaledOTU <- scale(bacteria[1:nrow(bacteria),24:ncol(bacteria)], scale=T)
 #summary(scaledOTU, display=NULL)
 #mean(scaledOTU)
+
+test <- delete_neg_mock(bacteria)
 
 #delete the Mock-Community and negatives
 bacteria_new <- bacteria[-c(63,64,65,66),]
