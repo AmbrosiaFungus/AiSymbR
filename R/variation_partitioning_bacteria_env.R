@@ -44,11 +44,11 @@ peform_varpart <- function(df, env_vars, limit_OTU_table, normalization="helling
 
 }
 
-delete_neg_mock <- function(df){
+delete_neg_mock <- function(df, names_mock, name_neg){
 
   df_clean <- as.data.table(df)
 
-  result <- df_clean[!Sample_ID %like% "Mock" & !Sample_ID %like% "Neg"]
+  result <- df_clean[!Sample_ID %like% get(names_mock) & !Sample_ID %like% name_neg]
 
   return(result)
 
