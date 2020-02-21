@@ -8,12 +8,15 @@
 #' @export
 #'
 #' @examples
-delete_neg_mock <- function(df, names_mock, name_neg){
 
-  df_clean <- as.data.table(df)
+delete_neg_mock <- function(df, name_mock, name_neg){
 
-  result <- df_clean[!Sample_ID %like% get(names_mock) & !Sample_ID %like% name_neg]
+  DT <- as.data.table(df)
+
+  result <- DT[!eval(Sample_ID) %like% name_mock & !eval(Sample_ID) %like% name_neg]
 
   return(result)
 
 }
+
+test <- delete_neg_mock(df=bacteria, name_mock = "Mock", name_neg = "Neg" )
