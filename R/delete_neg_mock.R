@@ -19,4 +19,4 @@ delete_neg_mock <- function(df, name_mock, name_neg){
 
 }
 
-test <- delete_neg_mock(df=bacteria, name_mock = "Mock", name_neg = "Neg" )
+#test <- delete_neg_mock(df=bacteria, name_mock = "Mock", name_neg = "Neg" )
